@@ -3,9 +3,11 @@ import wx.lib.intctrl as wxint
 from random import randint
 
 # TODO add more choices for other games
+# CoC, DCC for now
 # TODO create selection that shows specific panels.
+# https://www.blog.pythonlibrary.org/2010/06/16/wxpython-how-to-switch-between-panels/
 
-class DicePanel(wx.Panel):
+class D20Panel(wx.Panel):
   def __init__(self, parent):
     super().__init__(parent)
     header_font = wx.Font(wx.FontInfo(18).Family(wx.FONTFAMILY_ROMAN).Italic().Underlined())
@@ -66,7 +68,47 @@ class DicePanel(wx.Panel):
     self.Show()
 
 
-# Controllers
+class CoCPanel(wx.Panel):
+  def __init__(self, parent):
+    super().__init__(parent)
+    header_font = wx.Font(wx.FontInfo(18).Family(wx.FONTFAMILY_ROMAN).Italic().Underlined())
+    header2_font = wx.Font(wx.FontInfo(16).Family(wx.FONTFAMILY_ROMAN).Italic())
+    # sizers
+    sizer = wx.BoxSizer(wx.VERTICAL)
+    # horizontal sizers
+    hs = wx.BoxSizer(wx.HORIZONTAL)
+    hs2 = wx.BoxSizer(wx.HORIZONTAL)
+    hs3 = wx.BoxSizer(wx.HORIZONTAL)
+    hs4 = wx.BoxSizer(wx.HORIZONTAL)
+
+    # roll percentile dice
+    self.percent_header = wx.StaticText(self, label="Roll Percentile")
+    self.percent_header.SetFont(header2_font)
+    sizer.Add(self.percent_header, 0, wx.ALL, 5)
+    # checkbox buttons adv, dis (only one can be checked)
+    percent_btn = wx.Button(self, label="Roll Dice!")
+    percent_btn.Bind(wx.EVT_BUTTON, self.roll_percentile)
+    hs3.Add(percent_btn, 0, wx.ALL | wx.ALIGN_LEFT, 5)
+    # display d20 result
+    self.percentile_result = wx.StaticText(self, label=f"")
+    hs3.Add(self.d20_result, 0, wx.ALL | wx.CENTER, 5)
+    sizer.Add(hs3, 0, wx.ALL, 5)
+
+    # roll other dice
+    self.dice_header = wx.StaticText(self, label="Roll Other Dice")
+    self.dice_header.SetFont(header2_font)
+    sizer.Add(self.dice_header, 0, wx.ALL, 5)
+    self.dice_face = wx.RadioBox(self, label="Choose Your Dice!", choices=["d4", "d6", "d8", "d10", "d12"])
+    sizer.Add(self.dice_face, 0, wx.ALL | wx.EXPAND, 5)
+    # amount entry
+    self.amount_label = wx.StaticText(self, label="How many dice are you rolling?")
+    hs2.Add(self.amount_label, 0, wx.ALL | wx.EXPAND, 5)
+    self.dice_amount = wxint.IntCtrl(self, size=(50, 20))
+    hs2.Add(self.dice_amount, 0, wx.ALL | wx.ALIGN_LEFT, 5)
+    sizer.Add(hs2, 0, wx.ALL, 5)
+
+
+# Functions
   def roll_dice(self, event):
     face = self.dice_face.GetString(self.dice_face.GetSelection())
     face_value = int(face.replace('d', ''))
@@ -85,6 +127,11 @@ class DicePanel(wx.Panel):
     self.total_text.SetLabel(f"You rolled {amount} {face} for a total of {total}!")
 
     self.dice_amount.SetValue(0)
+  
+
+  def roll_percentile(self, event):
+    total = randint(1, 100)
+    self.percentile_result.SetLabel(f'You rolled a {total}!')
 
 
   def roll_d20(self, event):
@@ -112,8 +159,11 @@ class DicePanel(wx.Panel):
 class DiceFrame(wx.Frame):
   def __init__(self):
     super().__init__(parent=None, title="Dice Roller", size=(360,640))
-    self.Panel = DicePanel(self)
-    ICON_PATH = r"C:\Users\Carl\Desktop\Python\diceroller\Twenty_sided_dice.ico"
+    self.dndPanel = D20Panel(self)
+    self.cthuluPanel = CoCPanel(self)
+    self.cthuluPanel.Hide()
+
+    ICON_PATH = r"C:\Users\claamanen\OneDrive - Columbus State Community College\Python\diceroller\Twenty_sided_dice.ico"
     self.SetIcon(wx.Icon(ICON_PATH, wx.BITMAP_TYPE_ICO))
     self.Show()
     self.Centre()
