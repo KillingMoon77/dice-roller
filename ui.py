@@ -107,6 +107,13 @@ class CoCPanel(wx.Panel):
     hs2.Add(self.dice_amount, 0, wx.ALL | wx.ALIGN_LEFT, 5)
     sizer.Add(hs2, 0, wx.ALL, 5)
 
+    # display total
+    self.total_text = wx.StaticText(self, label=f"")
+    hs4.Add(self.total_text, 0, wx.ALL | wx.CENTER, 5)
+    sizer.Add(hs4, 0, wx.ALL, 5)
+    self.SetSizer(sizer)
+    self.Show()
+
 
 # Functions
   def roll_dice(self, event):
