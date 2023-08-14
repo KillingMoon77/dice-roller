@@ -170,10 +170,29 @@ class DiceFrame(wx.Frame):
     self.cthuluPanel = CoCPanel(self)
     self.cthuluPanel.Hide()
 
+    menubar = wx.MenuBar()
+    fileMenu = wx.Menu()
+
+    switch_panels_menu_item = fileMenu.Append(wx.ID_ANY, "Switch Panels", "placeholder")
+    self.Bind(wx.EVT_MENU, self.onSwitchPanels, switch_panels_menu_item)
+    menubar.Append(fileMenu, '&File')
+    self.SetMenuBar(menubar)
+
     ICON_PATH = r"C:\Users\claamanen\OneDrive - Columbus State Community College\Python\diceroller\Twenty_sided_dice.ico"
     self.SetIcon(wx.Icon(ICON_PATH, wx.BITMAP_TYPE_ICO))
     self.Show()
     self.Centre()
+
+def onSwitchPanels(self, event):
+    if self.dndPanel.IsShown():
+      self.SetTitle("Call of Cthulu Dice Roller")
+      self.dndPanel.Hide()
+      self.cthuluPanel.Show()
+    else:
+      self.SetTitle("DnD Dice Roller")
+      self.dndPanel.Show()
+      self.cthuluPanel.Hide()
+    self.Layout()
 
 if __name__ == '__main__':
   app = wx.App()   
